@@ -42,9 +42,10 @@ pipeline {
     stage('Ansible Deploy') {
       steps {
         dir('ansible') {
-          // Disable SSH host key checking
-          withEnv(["ANSIBLE_HOST_KEY_CHECKING=False"]) {
-            sh 'ansible-playbook -i inventory install_web.yml'
+          withCredentials([sshUserPrivateKey(credentialsId: 'azure-ssh-key', keyFileVariable: 'SSH_KEY')]) {
+            withEnv(["ANSIBLE_HOST_KEY_CHECKING=False", "ANSIBLE_PRIVATE_KEY_FILE=$SSH_KEY"]) {
+              sh 'ansible-playbook -i inventory install_web.yml'
+            }
           }
         }
       }
@@ -52,10 +53,10 @@ pipeline {
 
     stage('Verify') {
       steps {
-        // OPTIONAL: Replace this with dynamic IP later
-        sh 'curl http://223.123.108.1'
+        sh 'curl http://172.191.106.220'
       }
     }
   }
 }
+
 
