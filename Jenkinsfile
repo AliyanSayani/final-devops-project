@@ -4,6 +4,10 @@ pipeline {
   environment {
     PATH = "/usr/local/sbin:/usr/bin/terraform:${env.PATH}"
     TF_IN_AUTOMATION = "true"
+    ARM_SUBSCRIPTION_ID = credentials('AZURE_SUBSCRIPTION_ID')
+    ARM_CLIENT_ID       = credentials('AZURE_CLIENT_ID')
+    ARM_CLIENT_SECRET   = credentials('AZURE_CLIENT_SECRET')
+    ARM_TENANT_ID       = credentials('AZURE_TENANT_ID')
   }
 
   stages {
@@ -24,7 +28,13 @@ pipeline {
     stage('Terraform Apply') {
       steps {
         dir('terraform') {
-          sh 'terraform apply -auto-approve'
+          sh '''
+            terraform apply -auto-approve \
+              -var "subscription_id=$ARM_SUBSCRIPTION_ID" \
+              -var "client_id=$ARM_CLIENT_ID" \
+              -var "client_secret=$ARM_CLIENT_SECRET" \
+              -var "tenant_id=$ARM_TENANT_ID"
+          '''
         }
       }
     }
@@ -39,9 +49,10 @@ pipeline {
 
     stage('Verify') {
       steps {
-        // Replace with your actual public IP or terraform output variable in the future
+        // OPTIONAL: Replace this with dynamic IP later
         sh 'curl http://223.123.108.1'
       }
     }
   }
 }
+
