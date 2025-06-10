@@ -42,7 +42,10 @@ pipeline {
     stage('Ansible Deploy') {
       steps {
         dir('ansible') {
-          sh 'ansible-playbook -i inventory install_web.yml'
+          // Disable SSH host key checking
+          withEnv(["ANSIBLE_HOST_KEY_CHECKING=False"]) {
+            sh 'ansible-playbook -i inventory install_web.yml'
+          }
         }
       }
     }
