@@ -1,8 +1,31 @@
 provider "azurerm" {
   features {}
-  subscription_id = "ea6fc9c7-fe32-4565-b42a-e336c72040d9"
+  subscription_id = var.subscription_id
+  client_id       = var.client_id
+  client_secret   = var.client_secret
+  tenant_id       = var.tenant_id
 }
 
+variable "subscription_id" {
+  description = "Azure Subscription ID"
+  type        = string
+}
+
+variable "client_id" {
+  description = "Azure Client ID"
+  type        = string
+}
+
+variable "client_secret" {
+  description = "Azure Client Secret"
+  type        = string
+  sensitive   = true
+}
+
+variable "tenant_id" {
+  description = "Azure Tenant ID"
+  type        = string
+}
 resource "azurerm_resource_group" "rg" {
   name     = "final-devops-rg"
   location = "East US"
