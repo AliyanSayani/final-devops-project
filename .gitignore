@@ -11,3 +11,4 @@ ansible/inventory
 # Ignore logs or temporary files
 *.log
 *.bak
+.terraform/
